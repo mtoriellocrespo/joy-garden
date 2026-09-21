@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tiny Joy Garden 🌷</title>
+  <style>
+    :root{
+      --bg1:#fff7fb;
+      --bg2:#eef9ff;
+      --card:rgba(255,255,255,.82);
+      --ink:#4f4656;
+      --muted:#8b7f91;
+      --pink:#ff8eb7;
+      --pink2:#ffc6da;
+      --lav:#bca8ff;
+      --mint:#9ee7c5;
+      --yellow:#ffe89a;
+      --shadow:0 16px 40px rgba(112,83,117,.13);
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      min-height:100vh;
+      color:var(--ink);
+      font-family: ui-rounded, "SF Pro Rounded", "Segoe UI", system-ui, sans-serif;
+      background:
+        radial-gradient(circle at 15% 20%, #ffe2ee 0 8%, transparent 28%),
+        radial-gradient(circle at 88% 12%, #dff4ff 0 8%, transparent 28%),
+        linear-gradient(135deg,var(--bg1),var(--bg2));
+      overflow-x:hidden;
+    }
+
+    button,input{font:inherit}
+
+    .wrap{
+      width:min(980px,92vw);
+      margin:0 auto;
+      padding:42px 0 60px;
+    }
+
+    header{
+      text-align:center;
+      margin-bottom:24px;
+      animation:pop .55s ease both;
+    }
+
+    h1{
+      margin:0;
+      font-size:clamp(2.2rem,6vw,4.4rem);
+      letter-spacing:-.055em;
+      line-height:1;
+    }
+
+    header p{
+      color:var(--muted);
+      margin:14px auto 0;
+      max-width:610px;
+      font-size:1.03rem;
+      line-height:1.6;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid rgba(255,255,255,.8);
+      border-radius:28px;
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(14px);
+    }
+
+    .composer{
+      padding:22px;
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:12px;
+      align-items:center;
+    }
+
+    .input-wrap{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      background:white;
+      border-radius:18px;
+      padding:8px 10px 8px 16px;
+      border:1px solid #f0e7f0;
+    }
+
+    .input-wrap input{
+      border:0;
+      outline:0;
+      width:100%;
+      color:var(--ink);
+      background:transparent;
+    }
+
+    .emoji-pick{
+      display:flex;
+      gap:4px;
+    }
+
+    .emoji-pick button{
+      border:0;
+      background:transparent;
+      width:34px;height:34px;
+      border-radius:11px;
+      cursor:pointer;
+      transition:.18s ease;
+    }
+    .emoji-pick button:hover,.emoji-pick button.active{
+      background:#fff0f6;
+      transform:translateY(-2px) scale(1.06);
+    }
+
+    .plant{
+      border:0;
+      border-radius:18px;
+      padding:14px 20px;
+      background:linear-gradient(135deg,var(--pink),#ffabc8);
+      color:white;
+      font-weight:800;
+      cursor:pointer;
+      box-shadow:0 8px 18px rgba(255,142,183,.3);
+      transition:.18s ease;
+    }
+    .plant:hover{transform:translateY(-2px)}
+    .plant:active{transform:translateY(1px) scale(.98)}
+
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:14px;
+      margin:16px 0;
+    }
+
+    .stat{
+      padding:18px;
+      text-align:center;
+    }
+    .stat b{display:block;font-size:1.7rem}
+    .stat span{font-size:.85rem;color:var(--muted)}
+
+    .garden{
+      min-height:360px;
+      padding:22px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .garden-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:16px;
+    }
+
+    .garden h2{
+      font-size:1.15rem;
+      margin:0;
+    }
+
+    .clear{
+      border:0;
+      background:white;
+      color:#a57a8a;
+      border-radius:14px;
+      padding:9px 12px;
+      cursor:pointer;
+      box-shadow:0 6px 16px rgba(83,64,91,.07);
+    }
+
+    .plot{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(145px,1fr));
+      gap:14px;
+    }
+
+    .empty{
+      grid-column:1/-1;
+      padding:72px 20px;
+      text-align:center;
+      color:var(--muted);
+    }
+    .empty .big{font-size:4rem;display:block;margin-bottom:10px}
+
+    .joy{
+      min-height:145px;
+      border-radius:24px;
+      padding:16px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      position:relative;
+      cursor:pointer;
+      user-select:none;
+      border:1px solid rgba(255,255,255,.8);
+      box-shadow:0 10px 20px rgba(85,67,91,.08);
+      animation:grow .45s cubic-bezier(.2,.8,.2,1) both;
+      transition:.2s ease;
+      overflow:hidden;
+    }
+
+    .joy:hover{transform:translateY(-4px) rotate(-1deg)}
+    .joy .flower{font-size:2.4rem}
+    .joy .text{
+      font-weight:750;
+      line-height:1.3;
+      overflow-wrap:anywhere;
+      margin:8px 0;
+    }
+    .joy small{color:#786d7e}
+    .joy::after{
+      content:"";
+      position:absolute;
+      width:80px;height:80px;
+      border-radius:50%;
+      background:rgba(255,255,255,.26);
+      right:-22px;top:-26px;
+    }
+
+    .pink{background:linear-gradient(145deg,#ffe1ec,#fff4f8)}
+    .lav{background:linear-gradient(145deg,#ece6ff,#faf8ff)}
+    .mint{background:linear-gradient(145deg,#dbf7e9,#f3fff9)}
+    .sun{background:linear-gradient(145deg,#fff1bd,#fffaf0)}
+
+    .footer-note{
+      text-align:center;
+      color:var(--muted);
+      font-size:.83rem;
+      margin-top:16px;
+    }
+
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:28px;
+      transform:translate(-50%,20px);
+      background:#4f4656;
+      color:white;
+      padding:11px 16px;
+      border-radius:999px;
+      opacity:0;
+      pointer-events:none;
+      transition:.25s ease;
+      z-index:10;
+      box-shadow:var(--shadow);
+    }
+    .toast.show{opacity:1;transform:translate(-50%,0)}
+
+    .spark{
+      position:fixed;
+      pointer-events:none;
+      z-index:20;
+      animation:fly .8s ease-out forwards;
+    }
+
+    @keyframes grow{
+      from{opacity:0;transform:scale(.72) translateY(20px)}
+      to{opacity:1;transform:scale(1) translateY(0)}
+    }
+    @keyframes pop{
+      from{opacity:0;transform:translateY(-12px)}
+      to{opacity:1;transform:none}
+    }
+    @keyframes fly{
+      to{opacity:0;transform:translate(var(--x),var(--y)) rotate(40deg) scale(.5)}
+    }
+
+    @media(max-width:700px){
+      .composer{grid-template-columns:1fr}
+      .input-wrap{flex-direction:column;align-items:stretch}
+      .emoji-pick{justify-content:center}
+      .plant{width:100%}
+      .stats{gap:8px}
+      .stat{padding:14px 8px}
+      .plot{grid-template-columns:repeat(2,1fr)}
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <h1>tiny joy garden 🌷</h1>
+      <p>Plant one sweet thing from your day. Your little garden grows every time you notice something good.</p>
+    </header>
+
+    <section class="card composer">
+      <div class="input-wrap">
+        <input id="joyInput" maxlength="90" placeholder="What made you smile today?" autocomplete="off" />
+        <div class="emoji-pick" aria-label="Choose a flower">
+          <button class="active" data-emoji="🌷" aria-label="Tulip">🌷</button>
+          <button data-emoji="🌼" aria-label="Daisy">🌼</button>
+          <button data-emoji="🌸" aria-label="Cherry blossom">🌸</button>
+          <button data-emoji="🌻" aria-label="Sunflower">🌻</button>
+          <button data-emoji="🍓" aria-label="Strawberry">🍓</button>
+        </div>
+      </div>
+      <button class="plant" id="plantBtn">Plant it ✨</button>
+    </section>
+
+    <section class="stats">
+      <div class="card stat"><b id="joyCount">0</b><span>tiny joys</span></div>
+      <div class="card stat"><b id="streak">0</b><span>day streak</span></div>
+      <div class="card stat"><b id="level">Seedling</b><span>garden level</span></div>
+    </section>
+
+    <section class="card garden">
+      <div class="garden-top">
+        <h2>My garden</h2>
+        <button class="clear" id="clearBtn">Start fresh</button>
+      </div>
+      <div class="plot" id="plot"></div>
+    </section>
+
+    <p class="footer-note">Your garden is stored only in this browser using localStorage. Click a joy card to celebrate it again ✨</p>
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const input = document.getElementById('joyInput');
+    const plantBtn = document.getElementById('plantBtn');
+    const plot = document.getElementById('plot');
+    const joyCount = document.getElementById('joyCount');
+    const streakEl = document.getElementById('streak');
+    const levelEl = document.getElementById('level');
+    const toast = document.getElementById('toast');
+    const clearBtn = document.getElementById('clearBtn');
+    const emojiButtons = [...document.querySelectorAll('.emoji-pick button')];
+
+    let selectedEmoji = '🌷';
+    let joys = JSON.parse(localStorage.getItem('tinyJoyGarden') || '[]');
+
+    const colors = ['pink','lav','mint','sun'];
+
+    function save(){
+      localStorage.setItem('tinyJoyGarden', JSON.stringify(joys));
+    }
+
+    function escapeHtml(str){
+      return str.replace(/[&<>"']/g, ch => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
+      }[ch]));
+    }
+
+    function dayKey(ts){
+      const d = new Date(ts);
+      return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+    }
+
+    function calculateStreak(){
+      if(!joys.length) return 0;
+      const unique = [...new Set(joys.map(j => dayKey(j.time)))];
+      const dates = unique.map(s => {
+        const [y,m,d] = s.split('-').map(Number);
+        return new Date(y,m-1,d);
+      }).sort((a,b)=>b-a);
+
+      let streak = 1;
+      for(let i=1;i<dates.length;i++){
+        const diff = Math.round((dates[i-1]-dates[i]) / 86400000);
+        if(diff === 1) streak++;
+        else break;
+      }
+      return streak;
+    }
+
+    function levelName(n){
+      if(n >= 30) return 'Blooming';
+      if(n >= 15) return 'Sprout';
+      if(n >= 5) return 'Bud';
+      return 'Seedling';
+    }
+
+    function render(){
+      joyCount.textContent = joys.length;
+      streakEl.textContent = calculateStreak();
+      levelEl.textContent = levelName(joys.length);
+
+      if(!joys.length){
+        plot.innerHTML = `
+          <div class="empty">
+            <span class="big">🌱</span>
+            Your garden is waiting for its first little joy.
+          </div>`;
+        return;
+      }
+
+      plot.innerHTML = joys.slice().reverse().map((joy, reverseIndex) => {
+        const index = joys.length - 1 - reverseIndex;
+        const date = new Date(joy.time);
+        const pretty = date.toLocaleDateString(undefined,{month:'short',day:'numeric'});
+        return `
+          <article class="joy ${joy.color}" data-index="${index}" tabindex="0" role="button"
+                   aria-label="Celebrate: ${escapeHtml(joy.text)}">
+            <span class="flower">${joy.emoji}</span>
+            <div class="text">${escapeHtml(joy.text)}</div>
+            <small>${pretty}</small>
+          </article>`;
+      }).join('');
+
+      document.querySelectorAll('.joy').forEach(card => {
+        const celebrate = e => burst(e.clientX || innerWidth/2, e.clientY || innerHeight/2);
+        card.addEventListener('click', celebrate);
+        card.addEventListener('keydown', e => {
+          if(e.key === 'Enter' || e.key === ' '){
+            e.preventDefault();
+            burst(innerWidth/2, innerHeight/2);
+          }
+        });
+      });
+    }
+
+    function showToast(message){
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(()=>toast.classList.remove('show'),1700);
+    }
+
+    function burst(x,y){
+      const bits = ['✨','💗','🌸','⭐','🫧'];
+      for(let i=0;i<11;i++){
+        const el = document.createElement('span');
+        el.className = 'spark';
+        el.textContent = bits[Math.floor(Math.random()*bits.length)];
+        el.style.left = `${x}px`;
+        el.style.top = `${y}px`;
+        el.style.setProperty('--x', `${(Math.random()-.5)*180}px`);
+        el.style.setProperty('--y', `${-30-Math.random()*150}px`);
+        document.body.appendChild(el);
+        setTimeout(()=>el.remove(),850);
+      }
+    }
+
+    function plant(){
+      const text = input.value.trim();
+      if(!text){
+        showToast('Plant a little thought first 🌱');
+        input.focus();
+        return;
+      }
+
+      joys.push({
+        text,
+        emoji:selectedEmoji,
+        color:colors[Math.floor(Math.random()*colors.length)],
+        time:Date.now()
+      });
+
+      save();
+      render();
+      input.value = '';
+      showToast('A tiny joy just bloomed 🌷');
+      burst(innerWidth/2, Math.min(innerHeight-140, 520));
+      input.focus();
+    }
+
+    emojiButtons.forEach(btn => {
+      btn.addEventListener('click', ()=>{
+        emojiButtons.forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedEmoji = btn.dataset.emoji;
+      });
+    });
+
+    plantBtn.addEventListener('click', plant);
+    input.addEventListener('keydown', e => {
+      if(e.key === 'Enter') plant();
+    });
+
+    clearBtn.addEventListener('click', ()=>{
+      if(!joys.length) return;
+      if(confirm('Start a fresh garden? This removes your saved joys from this browser.')){
+        joys = [];
+        save();
+        render();
+        showToast('Fresh soil, fresh start 🌱');
+      }
+    });
+
+    render();
+  </script>
+</body>
+</html>
